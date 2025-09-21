@@ -10,7 +10,7 @@ const SUBJECTS = {
   "国語": { gid: 0 }
 };
 
-/***** JSONP *****/
+/***** JSONP + フェッチ自動フォールバック *****/
 function jsonp(url) {
   return new Promise((resolve, reject) => {
     const cb = "__cb_" + Math.random().toString(36).slice(2);
@@ -19,18 +19,37 @@ function jsonp(url) {
     s.src = url + sep + 'callback=' + cb;
     s.async = true;
 
+    let cleaned = false;
+    function cleanup() {
+      if (cleaned) return;
+      cleaned = true;
+      try { delete window[cb]; } catch {}
+      try { document.body.removeChild(s); } catch {}
+    }
+
     window[cb] = (data) => {
-      try { resolve(data); }
-      finally {
-        delete window[cb];
-        document.body.removeChild(s);
+      cleanup();
+      resolve(data);
+    };
+
+    s.onerror = async () => {
+      cleanup();
+      // JSONPがダメだった場合、callback= を取り除いて JSON で再試行
+      try {
+        const urlNoCb = url
+          .replace(/([?&])callback=[^&]+(&|$)/, '$1') // callback= を除去
+          .replace(/[?&]$/, '');                      // 末尾の?や&を除去
+        const res = await fetch(urlNoCb, { cache: 'no-store' });
+        const ct = res.headers.get('content-type') || '';
+        if (!res.ok) throw new Error(`http_${res.status}`);
+        if (!ct.includes('application/json')) throw new Error('not_json');
+        const json = await res.json();
+        resolve(json);
+      } catch (err) {
+        reject(new Error('jsonp_error'));
       }
     };
-    s.onerror = () => {
-      delete window[cb];
-      document.body.removeChild(s);
-      reject(new Error('jsonp_error'));
-    };
+
     document.body.appendChild(s);
   });
 }
