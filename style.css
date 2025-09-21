@@ -197,3 +197,22 @@ h2.step {
   margin-top: 20px;
   text-align: center;
 }
+/* === モバイル向け調整・アクセシビリティ改善 === */
+
+/* モバイルで画像がはみ出さないように */
+.q-image-wrap img { max-width: 100%; height: auto; }
+
+/* フォーカス見やすく（キーボード操作の配慮） */
+button:focus-visible,
+.chip:focus-visible,
+.seg-btn:focus-visible,
+#answerInput:focus-visible {
+  outline: 3px solid #4fc3f7;
+  outline-offset: 2px;
+}
+
+/* 小画面での横幅最適化 */
+@media (max-width: 520px) {
+  .wrap { padding: 14px; }
+  .q-image-wrap img { max-width: 100%; }
+}
