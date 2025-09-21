@@ -1,15 +1,13 @@
-console.log('[quiz-app] boot');
+console.log('[masakazusunday] boot');
 
 /***** 設定：あなたの最新 /exec URL をセット *****/
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxw1_oqKmaY1plPI0fz8e-_9Fd-WgL8smWSTNpq2-qwWBDTNSbvKP0ymsOfex7dRsgmWg/exec";
-console.log('[quiz-app] GAS_URL =', GAS_URL);
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwitCYqqwt3frOfYc4JQBDnAHRroR2E-CgBQ6c3jKKoot6HwyV2mKdoC1CD7aXFDCYQLw/exec";
+console.log('[masakazusunday] GAS_URL =', GAS_URL);
 
-/***** タブごとの gid *****/
+/***** 科目ごとの gid *****/
 const SUBJECTS = {
-  "算数": { gid: 0 },
-  "国語": { gid: 162988483 },
-  "理科": { gid: 1839969673 },
-  "社会": { gid: 2143649641 },
+  "算数": { gid: 1238658486 },
+  "国語": { gid: 0 }
 };
 
 /***** JSONP *****/
@@ -40,15 +38,15 @@ function jsonp(url) {
 /***** 状態 *****/
 const state = {
   subject: "国語",
-  pool: "all",           // all | wrong_blank（FALSE + 空白のみ）
+  pool: "all",           // all | wrong_blank
   order: "random",       // random | sequential
   scope: "all",          // all | byweek
   week: null,
   rows: [],
   i: 0,
   todayCount: 0,
-  phase: "answer",       // "answer"（判定待ち）/ "next"（次へ待機）
-  busy: false            // 二重操作防止
+  phase: "answer",       // "answer" | "next"
+  busy: false
 };
 
 /***** ユーティリティ *****/
@@ -97,7 +95,7 @@ function setNextVisible(v){
   nextBtn.classList.toggle('hidden', !v);
 }
 
-/***** 授業回の選択肢を生成 *****/
+/***** 週リストの選択肢を生成 *****/
 async function loadWeeks() {
   const gid = SUBJECTS[state.subject].gid;
   const url = `${GAS_URL}?action=get&gid=${gid}&pool=all`;
@@ -110,7 +108,7 @@ async function loadWeeks() {
 
     const weekSelect = document.querySelector('#weekSelect');
     if (weekSelect) {
-      weekSelect.innerHTML = '<option value="">- 授業回を選択 -</option>';
+      weekSelect.innerHTML = '<option value="">- 週を選択 -</option>';
       weeks.forEach(week => {
         const option = document.createElement('option');
         option.value = week;
@@ -194,10 +192,10 @@ function renderQuestion(row){
   if (weekEl) weekEl.textContent = row.week ? String(row.week) : '';
 
   state.phase = "answer";
-  setNextVisible(false); // 判定前は次へボタンを隠す
+  setNextVisible(false);
 }
 
-/***** ログ書き込み（result: correct|wrong|skip）*****/
+/***** ログ書き込み *****/
 async function logResult(row, result){
   const gid = SUBJECTS[state.subject].gid;
   const url = `${GAS_URL}?action=log&gid=${gid}&id=${encodeURIComponent(row.id)}&result=${encodeURIComponent(result)}`;
@@ -212,10 +210,10 @@ async function logResult(row, result){
 }
 
 /***** 答えの判定＆保存 → 次へ待機 *****/
-async function submitAnswer(kind = 'answer'){ // 'answer' | 'skip'
+async function submitAnswer(kind = 'answer'){
   if (state.busy) return;
   if (state.i >= state.rows.length) return;
-  if (state.phase !== "answer") return; // 二重Enter防止
+  if (state.phase !== "answer") return;
 
   const row = state.rows[state.i];
   const feedbackEl = document.querySelector('#feedback');
@@ -227,7 +225,6 @@ async function submitAnswer(kind = 'answer'){ // 'answer' | 'skip'
   if (kind === 'answer') {
     const user = norm(ansEl ? ansEl.value : '');
 
-    // 入力が空白の場合は「スキップ扱い」で正解を表示
     if (user === '') {
       result = 'skip';
       if (feedbackEl) {
@@ -245,7 +242,6 @@ async function submitAnswer(kind = 'answer'){ // 'answer' | 'skip'
         feedbackEl.classList.toggle('ng', !isCorrect);
       }
 
-      // 正解ならポイント加算
       if (isCorrect){
         state.todayCount += 1;
         saveTodayPoint();
@@ -254,7 +250,6 @@ async function submitAnswer(kind = 'answer'){ // 'answer' | 'skip'
       }
     }
   } else {
-    // スキップボタン
     result = 'skip';
     if (feedbackEl) {
       feedbackEl.textContent = `スキップ… 正解は：${row.answer}`;
@@ -262,28 +257,24 @@ async function submitAnswer(kind = 'answer'){ // 'answer' | 'skip'
     }
   }
 
-  logResult(row, result); // awaitしない
-
-  // 次へ待機モード（Enter 連打してもここで止まる）
+  logResult(row, result);
   state.phase = "next";
   setNextVisible(true);
   state.busy = false;
 }
 
-/***** 次の問題へ（1回だけ進む）*****/
+/***** 次の問題へ *****/
 function goNext(){
   if (state.busy) return;
   if (state.phase !== "next") return;
 
   state.busy = true;
-
   state.i += 1;
   if (state.i >= state.rows.length) {
     finishSet();
   } else {
     renderQuestion(state.rows[state.i]);
   }
-
   state.busy = false;
 }
 
@@ -303,7 +294,6 @@ function finishSet(){
 
 /***** イベント結線 *****/
 function bindEvents(){
-  // 科目切替
   document.addEventListener('click', (e)=>{
     const btn = e.target.closest('[data-subject]');
     if (!btn) return;
@@ -331,15 +321,13 @@ function bindEvents(){
     if (changed || (weekSelect && weekSelect.options.length <= 1)) loadWeeks();
   });
 
-  // pool / order
   document.addEventListener('change', (e)=>{
     const p = e.target.closest('input[name="pool"]');
-    if (p) state.pool = p.value; // 'all' | 'wrong_blank'
+    if (p) state.pool = p.value;
     const o = e.target.closest('input[name="order"]');
-    if (o) state.order = o.value; // 'random' | 'sequential'
+    if (o) state.order = o.value;
   });
 
-  // スコープ切替
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.seg-btn[data-scope]');
     if (!btn) return;
@@ -358,7 +346,6 @@ function bindEvents(){
     }
   });
 
-  // 授業回選択
   const weekSelect = document.querySelector('#weekSelect');
   if (weekSelect) {
     weekSelect.addEventListener('change', (e) => {
@@ -366,31 +353,22 @@ function bindEvents(){
     });
   }
 
-  // クイズ開始
   document.querySelector('#startBtn')?.addEventListener('click', loadQuestions);
-
-  // メニューへ戻る
   document.querySelector('#backBtn')?.addEventListener('click', ()=>{ showPanel('#subjectPanel'); });
 
-  // Enter挙動：判定 → 次へ
   const input = document.querySelector('#answerInput');
   if (input) {
     input.addEventListener('keydown', e=>{
       if (e.key === 'Enter') {
-        if (state.phase === 'answer') submitAnswer('answer'); // 空白なら「スキップして正答表示」
-        else if (state.phase === 'next') goNext();            // もう一度Enterで次へ
+        if (state.phase === 'answer') submitAnswer('answer');
+        else if (state.phase === 'next') goNext();
       }
     });
   }
   document.querySelector('#submitBtn')?.addEventListener('click', () => submitAnswer('answer'));
-
-  // スキップ（空白保存し、正解を表示）
   document.querySelector('#skipBtn')?.addEventListener('click', () => submitAnswer('skip'));
-
-  // 次へ（▶アイコン）
   document.querySelector('#nextBtn')?.addEventListener('click', () => goNext());
 
-  // 本日ポイントリセット
   document.querySelector('#resetTodayTop')?.addEventListener('click', resetTodayPoint);
   document.querySelector('#resetToday')?.addEventListener('click', resetTodayPoint);
 }
