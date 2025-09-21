@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>正和復習システム</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- 404回避用のダミーfavicon -->
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <h1>正和復習システム</h1>
+
+      <div class="toolbar">
+        <div class="today-counter">
+          本日獲得ポイント：<span id="pointTodayTop">0</span>
+          <button id="resetTodayTop" class="ghost">リセット</button>
+        </div>
+      </div>
+
+      <section class="card">
+        <h2 class="step">① 科目を選ぶ</h2>
+        <div class="row">
+          <button type="button" class="chip" data-subject="算数">算数</button>
+          <button type="button" class="chip" data-subject="国語">国語</button>
+          <button type="button" class="chip" data-subject="理科">理科</button>
+          <button type="button" class="chip" data-subject="社会">社会</button>
+        </div>
+      </section>
+    </header>
+
+    <section id="subjectPanel" class="card hidden">
+      <h2 id="subjectTitle"></h2>
+
+      <div class="mode-row">
+        <div class="seg">
+          <button class="seg-btn active" data-scope="all">小４全授業</button>
+          <button class="seg-btn" data-scope="byweek">授業回</button>
+        </div>
+        <select id="weekSelect" class="hidden" aria-label="授業回の選択"></select>
+      </div>
+
+      <div class="filters">
+        <label><input type="radio" name="pool" value="all" checked> 全問</label>
+        <label><input type="radio" name="pool" value="wrong_blank"> 不正解＆未回答</label>
+
+        <label class="spacer"></label>
+
+        <label><input type="radio" name="order" value="random" checked> ランダム</label>
+        <label><input type="radio" name="order" value="sequential"> 上から順に</label>
+      </div>
+
+      <div class="start-row">
+        <button id="startBtn" class="primary">クイズ開始</button>
+        <div class="counter">
+          本日獲得ポイント：<span id="pointToday">0</span>
+          <button id="resetToday" class="ghost">リセット</button>
+        </div>
+      </div>
+
+      <div id="status" style="min-height:1.2em; margin-top:6px; opacity:.9;"></div>
+    </section>
+
+    <section id="quizPanel" class="card hidden">
+      <div class="quiz-header">
+        <div>Q<span id="qIndex">0</span>/<span id="qTotal">0</span>　<span id="qWeek"></span></div>
+        <button id="backBtn" class="ghost">← メニューへ</button>
+      </div>
+
+      <div id="qImageWrap" class="q-image-wrap hidden">
+        <img id="qImage" alt="question image">
+      </div>
+
+      <div id="qText" class="q-text"></div>
+
+      <div class="answer-row">
+        <input id="answerInput" type="text" placeholder="ここにタイピング" autocomplete="off" />
+        <button id="submitBtn" class="primary">送信</button>
+      </div>
+
+      <div id="feedback" class="feedback" aria-live="polite"></div>
+
+<div class="nav-row">
+  <button id="skipBtn" class="ghost">わからない（スキップ）</button>
+  <button id="nextBtn" class="primary hidden">次へ ▶</button>
+</div>
+    </section>
+
+    <footer class="foot">
+      <small>データ元：こぐれさんスプレッドシート</small>
+    </footer>
+  </main>
+
+  
+  <!-- スクリプトは body 終了直前、defer＋キャッシュバスター -->
+  <script defer src="./app.js?v=1"></script>
+</body>
+</html>
+
