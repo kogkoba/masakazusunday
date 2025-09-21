@@ -1,0 +1,199 @@
+/* === 全体の基本設定 === */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto,
+               "Hiragino Kaku Gothic ProN", "Noto Sans JP", sans-serif;
+  background: #0b1020;  /* ダークブルー背景 */
+  color: #fff;          /* 文字色は白 */
+}
+
+.wrap {
+  max-width: 980px;     /* コンテンツ幅を制限（中央寄せ） */
+  margin: auto;
+  padding: 20px;
+}
+
+/* === 見出し系 === */
+h1 { margin: 0 0 12px; }
+h2.step {
+  margin: 0 0 10px;
+  font-size: 18px;
+  opacity: .95;         /* 少し薄め */
+}
+
+/* === カード（各パネル） === */
+.card {
+  background: #121a33;
+  border: 1px solid #23305a;
+  border-radius: 14px;
+  padding: 16px;
+  margin-top: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+.hidden { display: none; }  /* 非表示にする共通クラス */
+
+/* === ヘッダー部分のツールバー === */
+.toolbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin: 6px 0 10px;
+}
+.today-counter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.today-counter button { padding: 6px 10px; }
+
+/* === 科目選択チップボタン === */
+.row { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  background: #1e2a54;
+  border: 1px solid #44548f;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.chip:hover { filter: brightness(1.1); }   /* ホバーで少し明るく */
+.chip.primary {
+  background: #4fc3f7; /* 選択時の色（明るい水色） */
+  color: #000;
+  border: none;
+  font-weight: 800;
+}
+
+/* === 授業回スイッチ（セグメントボタン） === */
+.seg {
+  display: inline-flex;
+  background: #0f1837;
+  border: 1px solid #2f3d70;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.seg-btn {
+  background: transparent;
+  color: #fff;
+  padding: 8px 14px;
+  border: none;
+  cursor: pointer;
+}
+.seg-btn.active {
+  background: #3a68ff; /* アクティブ時は青背景 */
+  color: #000;
+  font-weight: 700;
+}
+
+/* === 授業回のプルダウン === */
+.mode-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
+#weekSelect {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #44548f;
+  background: #0f1837;
+  color: #fff;
+}
+
+/* === 出題フィルター (全問 / 不正解＆未回答) === */
+.filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin: 8px 0;
+}
+.filters label { opacity: .9; }
+.filters .spacer { flex: 1; } /* 空白を作るための伸縮スペース */
+
+/* === ボタン共通スタイル === */
+.primary {
+  background: #4fc3f7;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.ghost {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #7b86b2;
+  border-radius: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+}
+
+/* === クイズ開始ボタンとポイント表示 === */
+.start-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: space-between;
+}
+.counter { display: flex; align-items: center; gap: 10px; }
+
+/* === クイズ画面ヘッダー === */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+/* === 問題の画像 === */
+.q-image-wrap { margin: 8px 0; }
+.q-image-wrap img {
+  max-width: 60%;
+  border-radius: 10px;
+  border: 1px solid #334;
+}
+
+/* === 問題文 === */
+.q-text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin: 8px 0 4px;
+  white-space: pre-wrap; /* 改行やスペースをそのまま表示 */
+}
+
+/* === 回答入力欄 === */
+.answer-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+#answerInput {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #0f1837;
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+/* === フィードバック（正解 / 不正解） === */
+.feedback { min-height: 28px; margin-top: 8px; }
+.feedback.ok { color: #76ff7a; }  /* 正解は緑 */
+.feedback.ng { color: #ff8a80; }  /* 不正解は赤 */
+
+/* === ナビゲーション（スキップ/次へ） === */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* === フッター === */
+.foot {
+  opacity: .7;
+  margin-top: 20px;
+  text-align: center;
+}
