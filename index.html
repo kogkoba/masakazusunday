@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>正和復習システム</title>
+  <title>Masakazu Sunday</title>
   <link rel="stylesheet" href="style.css">
   <!-- 404回避用のダミーfavicon -->
   <link rel="icon" href="data:,">
@@ -11,7 +11,7 @@
 <body>
   <main class="wrap">
     <header class="top">
-      <h1>正和復習システム</h1>
+      <h1>Masakazu Sunday</h1>
 
       <div class="toolbar">
         <div class="today-counter">
@@ -23,23 +23,24 @@
       <section class="card">
         <h2 class="step">① 科目を選ぶ</h2>
         <div class="row">
+          <!-- masakazusunday では国語・算数のみ -->
           <button type="button" class="chip" data-subject="算数">算数</button>
           <button type="button" class="chip" data-subject="国語">国語</button>
-          <button type="button" class="chip" data-subject="理科">理科</button>
-          <button type="button" class="chip" data-subject="社会">社会</button>
         </div>
       </section>
     </header>
 
     <section id="subjectPanel" class="card hidden">
+      <!-- 選択された科目名を表示 -->
       <h2 id="subjectTitle"></h2>
 
       <div class="mode-row">
         <div class="seg">
-          <button class="seg-btn active" data-scope="all">小４全授業</button>
-          <button class="seg-btn" data-scope="byweek">授業回</button>
+          <!-- 「小４全授業 / 授業回」を「全週 / 週で絞る」に言い換え -->
+          <button class="seg-btn active" data-scope="all">全週</button>
+          <button class="seg-btn" data-scope="byweek">週で絞る</button>
         </div>
-        <select id="weekSelect" class="hidden" aria-label="授業回の選択"></select>
+        <select id="weekSelect" class="hidden" aria-label="週の選択"></select>
       </div>
 
       <div class="filters">
@@ -82,20 +83,18 @@
 
       <div id="feedback" class="feedback" aria-live="polite"></div>
 
-<div class="nav-row">
-  <button id="skipBtn" class="ghost">わからない（スキップ）</button>
-  <button id="nextBtn" class="primary hidden">次へ ▶</button>
-</div>
+      <div class="nav-row">
+        <button id="skipBtn" class="ghost">わからない（スキップ）</button>
+        <button id="nextBtn" class="primary hidden">次へ ▶</button>
+      </div>
     </section>
 
     <footer class="foot">
-      <small>データ元：こぐれさんスプレッドシート</small>
+      <small>データ元：こぐれさんスプレッドシート（国語 gid=0／算数 gid=1238658486）</small>
     </footer>
   </main>
 
-  
   <!-- スクリプトは body 終了直前、defer＋キャッシュバスター -->
-  <script defer src="./app.js?v=1"></script>
+  <script defer src="./app.js?v=2"></script>
 </body>
 </html>
-
